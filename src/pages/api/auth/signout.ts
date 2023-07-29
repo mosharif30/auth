@@ -1,13 +1,9 @@
 // Import dependencies and modules
-import { connectDb } from "@/utils/connectDb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { serialize } from "cookie";
+import { ApiResponse } from "@/interfaces/api";
 
 // Custom API response type definition
-type ApiResponse<T = {}> = {
-  message: string;
-  status: string;
-};
 
 // Handler function for clearing the authentication token (user logout)
 async function logoutHandler(

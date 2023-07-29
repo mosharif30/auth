@@ -3,12 +3,9 @@ import { connectDb } from "@/utils/connectDb";
 import { NextApiRequest, NextApiResponse } from "next";
 import User from "@/models/User";
 import { hashPassword } from "@/utils/auth";
+import { ApiResponse } from "@/interfaces/api";
 
 // Custom API response type definition
-type ApiResponse = {
-  message: string;
-  status: string;
-};
 
 async function connectToDatabase() {
   try {

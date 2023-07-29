@@ -5,13 +5,9 @@ import User from "@/models/User";
 import { verifyPassword } from "@/utils/auth";
 import { sign } from "jsonwebtoken";
 import { serialize } from "cookie";
+import { ApiResponse } from "@/interfaces/api";
 
 // Custom API response type definition
-type ApiResponse<T = {}> = {
-  message: string;
-  status: string;
-  data?: T;
-};
 
 // Function to connect to the database
 async function connectToDatabase() {
@@ -57,7 +53,9 @@ async function loginHandler(
 
     const secretKey: any = process.env.SECRET_KEY;
     const expiresIn = 24 * 60 * 60;
-    const token = sign({ email }, secretKey, { expiresIn });
+    const token = sign({ email, name: user.name, age: user.age }, secretKey, {
+      expiresIn,
+    });
     const serializedToken = serialize("token", token, {
       httpOnly: true,
       maxAge: expiresIn,
