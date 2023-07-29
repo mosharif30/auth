@@ -1,7 +1,8 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { toast } from "react-toastify";
 
 type FormData = {
   email: string;
@@ -11,6 +12,7 @@ type FormData = {
 const SigninForm: React.FC = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState("");
   const {
     handleSubmit,
     control,
@@ -33,16 +35,38 @@ const SigninForm: React.FC = () => {
       const res = await axios.post("/api/auth/signin", data);
       console.log(res);
       if (res.status === 200) {
+        toast.success("Welcome!", {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
         router.push("/dashboard");
       }
       reset(); // Reset the form after successful submission
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      setServerError(error.response.data.message);
+      toast.error(error.response.data.message, {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -116,6 +140,7 @@ const SigninForm: React.FC = () => {
         )}
       </div>
       <div>
+        <p className="mt-2 mb-2 text-sm text-red-500">{serverError}</p>
         <button
           type="submit"
           className="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-700"

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
+import { toast } from "react-toastify";
 
 type FormData = {
   email: string;
@@ -9,6 +10,8 @@ type FormData = {
 };
 
 const RegisterForm: React.FC = () => {
+  const [serverError, setServerError] = useState("");
+
   useEffect(() => {
     axios
       .get("/api/user")
@@ -36,10 +39,31 @@ const RegisterForm: React.FC = () => {
       console.log(res);
       if (res.status === 201) {
         router.push("/signin");
+        toast.success("Your SignUp Was Successful, Please LogIn", {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       }
       reset(); // Reset the form after successful submission
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      setServerError(error.response.data.message);
+      toast.error(error.response.data.message, {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
   const togglePasswordVisibility = () => {
@@ -119,6 +143,7 @@ const RegisterForm: React.FC = () => {
         )}
       </div>
       <div>
+        <p className="mt-2 mb-2 text-sm text-red-500">{serverError}</p>
         <button
           type="submit"
           className="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:bg-indigo-700"
