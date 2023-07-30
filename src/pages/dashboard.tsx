@@ -1,3 +1,4 @@
+import { SignOutHandler } from "@/utils/signOutHandler";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -42,25 +43,6 @@ const Dashboard = () => {
     }
   };
 
-  const signOutHandler = async () => {
-    try {
-      await axios.get("/api/auth/signout");
-      router.replace("/");
-      toast.info("You are Signed Out", {
-        position: "bottom-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-    } catch (error) {
-      router.replace("/signin");
-    }
-  };
-
   const {
     register,
     handleSubmit,
@@ -89,7 +71,8 @@ const Dashboard = () => {
       });
 
       if (error.response.status === 401) {
-        await signOutHandler();
+        await SignOutHandler();
+        router.replace("/");
       }
     }
   };
@@ -103,7 +86,10 @@ const Dashboard = () => {
         <div className="block text-gray-800 font-bold">{name}</div>
         <div className="block text-gray-800 font-bold">{age}</div>
         <button
-          onClick={signOutHandler}
+          onClick={async () => {
+            await SignOutHandler(true);
+            router.replace("/");
+          }}
           className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 m-2 rounded"
         >
           Sign Out

@@ -28,7 +28,7 @@ async function registerUserHandler(
   res: NextApiResponse<ApiResponse>
 ) {
   try {
-    const { email, password } = req.body;
+    const { email, password, confirmPassword } = req.body;
 
     // Validate email and password
     if (!email || !password) {
@@ -49,6 +49,14 @@ async function registerUserHandler(
       return res
         .status(422)
         .json({ status: "Failed", message: "Invalid Password Format" });
+    }
+    if (password !== confirmPassword) {
+      return res
+        .status(422)
+        .json({
+          status: "Failed",
+          message: "Password and Confirm Password are not matched",
+        });
     }
 
     await connectToDatabase();

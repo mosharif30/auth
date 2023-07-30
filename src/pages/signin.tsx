@@ -45,7 +45,7 @@ const SigninForm: React.FC = () => {
           progress: undefined,
           theme: "colored",
         });
-        router.push("/dashboard");
+        router.replace("/dashboard");
       }
       reset(); // Reset the form after successful submission
     } catch (error: any) {

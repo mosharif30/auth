@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 type FormData = {
   email: string;
   password: string;
+  confirmPassword: string;
 };
 
 const RegisterForm: React.FC = () => {
@@ -24,11 +25,13 @@ const RegisterForm: React.FC = () => {
   }, []);
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     handleSubmit,
     control,
     reset,
+    getValues,
     formState: { errors },
   } = useForm<FormData>(); // Specify FormData as the generic type for useForm
 
@@ -69,6 +72,11 @@ const RegisterForm: React.FC = () => {
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(
+      (prevShowConfirmPassword) => !prevShowConfirmPassword
+    );
+  };
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -87,6 +95,13 @@ const RegisterForm: React.FC = () => {
           name="email"
           control={control}
           defaultValue=""
+          rules={{
+            required: "Email is required",
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: "Invalid email address",
+            },
+          }}
           render={({ field }) => (
             <input
               {...field}
@@ -118,6 +133,12 @@ const RegisterForm: React.FC = () => {
               value: 8,
               message: "Password must be at least 8 characters long",
             },
+            pattern: {
+              value:
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+              message:
+                "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character",
+            },
           }}
           render={({ field }) => (
             <div className="flex">
@@ -140,6 +161,47 @@ const RegisterForm: React.FC = () => {
         />
         {errors.password && (
           <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+        )}
+      </div>
+      <div className="mb-4">
+        <label
+          htmlFor="confirmPassword"
+          className="block mb-2 text-sm font-medium text-gray-600"
+        >
+          Confirm Password
+        </label>
+        <Controller
+          name="confirmPassword"
+          control={control}
+          defaultValue=""
+          rules={{
+            required: "Confirm Password is required",
+            validate: (value) =>
+              value === getValues().password || "Passwords do not match",
+          }}
+          render={({ field }) => (
+            <div className="flex">
+              <input
+                {...field}
+                type={showConfirmPassword ? "text" : "password"}
+                className={`flex-grow px-3 py-2 placeholder-gray-300 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${
+                  errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              <button
+                type="button"
+                className="ml-2 px-3 py-2 text-sm font-medium text-indigo-600 focus:outline-none hover:text-indigo-800"
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                {showConfirmPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+          )}
+        />
+        {errors.confirmPassword && (
+          <p className="mt-1 text-sm text-red-500">
+            {errors.confirmPassword.message}
+          </p>
         )}
       </div>
       <div>
