@@ -20,7 +20,7 @@ async function connectToDatabase() {
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Regular expression for password validation
-const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
+const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%.^&*])[a-zA-Z0-9!@#$%.^&*]{6,16}$/;
 
 // Handler function for user registration (POST request)
 async function registerUserHandler(
