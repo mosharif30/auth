@@ -10,9 +10,9 @@ const Dashboard = () => {
   const router = useRouter();
   const [edit, setEdit] = useState(false);
   const [profile, setProfile] = useState<ProfileData>({
-    email: null,
-    name: null,
-    age: null,
+    email: "null",
+    name: "null",
+    age: 0,
   });
 
   const {
@@ -55,7 +55,7 @@ const Dashboard = () => {
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
       const res = await axios.post("/api/completeAuth", data);
-      const { email, name, age } = res.data.data;
+      const { email, name, age }: ProfileData = res.data.data;
       setProfile({ email, name, age });
       reset();
       setValue("name", name);

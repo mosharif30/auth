@@ -7,9 +7,9 @@ export interface ApiResponse<T = {}> {
   data?: T;
 }
 export type ProfileData = {
-  email: string | null;
-  name: string | null;
-  age: number | null;
+  email: string;
+  name: string;
+  age: number;
 };
 
 export type FormData = {
