@@ -4,17 +4,7 @@ import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import { SignOutHandler } from "@/utils/signOutHandler";
-type ProfileData = {
-  email: string | null;
-  name: string | null;
-  age: number | null;
-};
-
-type FormData = {
-  name: string;
-  age: number;
-  password: string;
-};
+import { FormData, ProfileData } from "@/interfaces/api";
 
 const Dashboard = () => {
   const router = useRouter();

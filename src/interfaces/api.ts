@@ -6,3 +6,14 @@ export interface ApiResponse<T = {}> {
   status?: string;
   data?: T;
 }
+export type ProfileData = {
+  email: string | null;
+  name: string | null;
+  age: number | null;
+};
+
+export type FormData = {
+  name: string;
+  age: number;
+  password: string;
+};
