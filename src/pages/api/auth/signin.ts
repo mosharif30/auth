@@ -26,13 +26,25 @@ async function loginHandler(
 ) {
   try {
     const { email, password } = req.body;
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    const passwordRegex =
+      /^(?=.*\d)(?=.*[!@#$%.^&*])[a-zA-Z0-9!@#$%.^&*]{6,16}$/;
 
     if (!email || !password) {
       return res
         .status(422)
         .json({ status: "Failed", message: "Invalid Data" });
     }
-
+    if (!emailRegex.test(email)) {
+      return res
+        .status(422)
+        .json({ status: "Failed", message: "Invalid Email Address" });
+    }
+    if (!passwordRegex.test(password)) {
+      return res
+        .status(422)
+        .json({ status: "Failed", message: "Invalid Password f" });
+    }
     await connectToDatabase();
 
     const user = await User.findOne({ email });

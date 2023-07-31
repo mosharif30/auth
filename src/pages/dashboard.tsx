@@ -6,6 +6,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 
 type FormData = {
+  email?: string;
   name: string;
   age: number;
   password: string;
@@ -13,21 +14,38 @@ type FormData = {
 
 const Dashboard = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [age, setAge] = useState(0);
+  const [profile, setProfile] = useState({
+    email: null,
+    name: null,
+    age: null,
+    password: null,
+  });
 
   useEffect(() => {
     fetchData();
   }, []);
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormData>({
+    defaultValues: {
+      name: "",
+      age: 0,
+      password: "",
+    },
+  });
   const fetchData = async () => {
     try {
       const res = await axios.get("/api/user");
       const { email, name, age } = res.data.data;
-      setEmail(email);
-      setName(name);
-      setAge(age);
+      setProfile({
+        email: email,
+        name: name,
+        age: age,
+        password: null,
+      });
     } catch (error) {
       router.replace("/signin");
       toast.error("Unauthorized! Please Sign In First", {
@@ -42,22 +60,29 @@ const Dashboard = () => {
       });
     }
   };
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<FormData>();
-
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
+      delete data.email;
+
       const res = await axios.post("/api/completeAuth", data);
       const { email, name, age } = res.data.data;
-      setEmail(email);
-      setName(name);
-      setAge(age);
-      reset(); // Reset the form after successful submission
+      setProfile({
+        email: email,
+        name: name,
+        age: age,
+        password: null,
+      });
+      reset();
+      toast.success("Profile updated successfully!", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     } catch (error: any) {
       toast.error(error.response.data.message, {
         position: "bottom-center",
@@ -76,104 +101,131 @@ const Dashboard = () => {
       }
     }
   };
-
-  const isProfileIncomplete = !name || !age;
-
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br flex-col ">
-        <div className="block text-gray-800 font-bold">{email}</div>
-        <div className="block text-gray-800 font-bold">{name}</div>
-        <div className="block text-gray-800 font-bold">{age}</div>
-        <button
-          onClick={async () => {
-            await SignOutHandler(true);
-            router.replace("/");
-          }}
-          className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 m-2 rounded"
-        >
-          Sign Out
-        </button>
-
-        {isProfileIncomplete && (
-          <form
-            className="bg-white p-8 rounded-md shadow-lg"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className="mb-6">
-              <label htmlFor="name" className="block text-gray-800 font-bold">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                {...register("name", { required: "Name is required" })}
-                className="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm px-4 py-2"
-                placeholder="Enter your name"
-              />
-              {errors.name && (
-                <span className="text-red-500 text-sm">
-                  {errors.name.message}
-                </span>
-              )}
-            </div>
-            <div className="mb-6">
-              <label htmlFor="age" className="block text-gray-800 font-bold">
-                Age
-              </label>
-              <input
-                type="number"
-                id="age"
-                {...register("age", {
-                  required: "Age is required",
-                  min: {
-                    value: 18,
-                    message: "You must be at least 18 years old",
-                  },
-                  max: {
-                    value: 100,
-                    message: "You cannot be older than 100",
-                  },
-                })}
-                className="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm px-4 py-2"
-                placeholder="Enter your age"
-              />
-              {errors.age && (
-                <span className="text-red-500 text-sm">
-                  {errors.age.message}
-                </span>
-              )}
-            </div>
-            <div className="mb-6">
-              <label
-                htmlFor="password"
-                className="block text-gray-800 font-bold"
-              >
-                password
-              </label>
-              <input
-                type="password"
-                id="password"
-                {...register("password", {
-                  required: "password is required",
-                })}
-                className="form-input mt-1 block w-full rounded-md border-gray-300 shadow-sm px-4 py-2"
-                placeholder="Enter your password"
-              />
-              {errors.password && (
-                <span className="text-red-500 text-sm">
-                  {errors.password.message}
-                </span>
-              )}
-            </div>
+      {" "}
+      <div className="min-h-screen bg-gray-100">
+        <div className="flex justify-center pt-16">
+          <div className="w-full">
             <button
-              type="submit"
-              className="w-full bg-indigo-500 text-white p-3 rounded-md hover:bg-indigo-600 font-bold"
+              onClick={async () => {
+                await SignOutHandler(true);
+                router.replace("/");
+              }}
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 m-2 rounded "
             >
-              Submit
+              Sign Out
             </button>
-          </form>
-        )}
+            <h1 className="text-3xl text-center mb-6 font-bold">
+              Profile Page
+            </h1>
+
+            {!profile.name && (
+              <>
+                {" "}
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="max-w-md mx-auto p-4"
+                >
+                  <div className="mb-4">
+                    <label
+                      htmlFor="name"
+                      className="block text-gray-700 font-bold mb-1"
+                    >
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      {...register("name", {
+                        required: "Name is required",
+                      })}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                    />
+                    {errors.name && (
+                      <p className="text-red-500">{errors.name.message}</p>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <label
+                      htmlFor="age"
+                      className="block text-gray-700 font-bold mb-1"
+                    >
+                      Age
+                    </label>
+                    <input
+                      type="number"
+                      id="age"
+                      {...register("age", {
+                        required: "Age is required",
+                        min: {
+                          value: 18,
+                          message: "Age must be at least 18",
+                        },
+                        max: {
+                          value: 120,
+                          message: "Age must be at most 120",
+                        },
+                      })}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                    />
+                    {errors.age && (
+                      <p className="text-red-500">{errors.age.message}</p>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <label
+                      htmlFor="password"
+                      className="block text-gray-700 font-bold mb-1"
+                    >
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      id="password"
+                      {...register("password", {
+                        required: "Password is required",
+                        minLength: {
+                          value: 6,
+                          message: "Password must be at least 6 characters",
+                        },
+                      })}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                    />
+                    {errors.password && (
+                      <p className="text-red-500">{errors.password.message}</p>
+                    )}
+                  </div>
+
+                  <div className="text-center">
+                    <button
+                      type="submit"
+                      className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+            <div className="mt-8">
+              <h2 className="text-xl font-bold text-center">Profile Details</h2>
+              <div className="max-w-md mx-auto bg-white p-4 mt-4 shadow-md rounded-md">
+                <p className="mb-2">
+                  <span className="font-bold">Email:</span> {profile.email}
+                </p>
+                <p className="mb-2">
+                  <span className="font-bold">Name:</span> {profile.name}
+                </p>
+                <p className="mb-2">
+                  <span className="font-bold">Age:</span> {profile.age}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

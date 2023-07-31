@@ -17,10 +17,11 @@ async function connectToDatabase() {
 }
 
 // Regular expression for email validation
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 // Regular expression for password validation
-const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%.^&*])[a-zA-Z0-9!@#$%.^&*]{6,16}$/;
+const passwordRegex =
+  /^(?=.*\d)(?=.*[!@#$%.^&*])[a-zA-Z0-9!@#$%.^&*]{6,16}$/;
 
 // Handler function for user registration (POST request)
 async function registerUserHandler(
@@ -51,12 +52,10 @@ async function registerUserHandler(
         .json({ status: "Failed", message: "Invalid Password Format" });
     }
     if (password !== confirmPassword) {
-      return res
-        .status(422)
-        .json({
-          status: "Failed",
-          message: "Password and Confirm Password are not matched",
-        });
+      return res.status(422).json({
+        status: "Failed",
+        message: "Password and Confirm Password are not matched",
+      });
     }
 
     await connectToDatabase();

@@ -49,7 +49,7 @@ const RegisterForm: React.FC = () => {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
+          progress: undefined, 
           theme: "colored",
         });
       }
