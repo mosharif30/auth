@@ -6,15 +6,8 @@ import { toast } from "react-toastify";
 // Import the UserModal component
 import "react-toastify/dist/ReactToastify.css"; // Import Toastify styles if you are using it
 import UserModal from "@/containers/userModal";
-
-export interface UserData {
-  _id: string;
-  email: string;
-  isAdmin: string;
-  name: string;
-  age: number;
-  createdAt: string;
-}
+import { SignOutHandler } from "@/utils/signOutHandler";
+import { ProfileData } from "@/interfaces/api";
 
 interface FormValues {
   email: string;
@@ -24,15 +17,17 @@ interface FormValues {
 }
 
 const UserTable: React.FC = () => {
-  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [editingUserId, setEditingUserId] = useState<string | undefined>(
+    undefined
+  );
   const { register, handleSubmit, setValue } = useForm<FormValues>();
-  const [users, setUsers] = useState<UserData[]>([]);
+  const [users, setUsers] = useState<ProfileData[]>([]);
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     axios
-      .get<{ data: UserData[] }>("/api/getAllUsers")
+      .get<{ data: ProfileData[] }>("/api/getAllUsers")
       .then(function (response) {
         if (response.status === 200) {
           setUsers(response.data.data);
@@ -57,11 +52,11 @@ const UserTable: React.FC = () => {
 
   const handleSignOut = async () => {
     // Implement the SignOutHandler function if not already defined
-    // await SignOutHandler();
+    await SignOutHandler();
     router.replace("/");
   };
 
-  const handleEditUser = (user: UserData) => {
+  const handleEditUser = (user: ProfileData) => {
     setEditingUserId(user._id);
     setIsModalOpen(true);
     setValue("email", user.email);
@@ -73,12 +68,12 @@ const UserTable: React.FC = () => {
   const handleSaveUser: SubmitHandler<FormValues> = (data) => {
     // You can implement the save logic here to update the user data on the server
     console.log("Updated user data:", data);
-    setEditingUserId(null);
+    setEditingUserId(undefined);
     setIsModalOpen(false);
   };
 
   const handleCloseModal = () => {
-    setEditingUserId(null);
+    setEditingUserId(undefined);
     setIsModalOpen(false);
   };
 
@@ -126,7 +121,7 @@ const UserTable: React.FC = () => {
       </div>
       {editingUserId && (
         <UserModal
-          user={users.find((user) => user._id === editingUserId) as UserData}
+          user={users.find((user) => user._id === editingUserId) as ProfileData}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           onSave={handleSaveUser}

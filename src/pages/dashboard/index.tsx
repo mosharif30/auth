@@ -113,8 +113,8 @@ const Dashboard = () => {
             <>
               {" "}
               <button
-                onClick={() => router.push("/allUsers")}
-                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded"
+                onClick={() => router.push("/dashboard/all-users")}
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded mt-3"
               >
                 All Users
               </button>
@@ -136,7 +136,7 @@ const Dashboard = () => {
               {profile.name && !edit && (
                 <button
                   onClick={handleEditToggle}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white py-2 mt-2 rounded"
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 mt-2 rounded"
                 >
                   Edit
                 </button>

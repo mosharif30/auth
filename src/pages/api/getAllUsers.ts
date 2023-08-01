@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { verifyToken } from "@/utils/auth";
-import { TokenPayload, ApiResponse } from "@/interfaces/api";
+import { ApiResponse } from "@/interfaces/api";
 import { connectDb } from "@/utils/connectDb";
 import User from "@/models/User";
 
@@ -18,7 +18,7 @@ const handleError = (
 };
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ApiResponse<any>>
+  res: NextApiResponse<ApiResponse>
 ) {
   if (req.method !== "GET") {
     res.status(405).json({ message: "Method Not Allowed", status: "error" });

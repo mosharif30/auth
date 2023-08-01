@@ -1,5 +1,6 @@
+import { UserModalProps } from "@/interfaces/api";
 import React, { useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 export interface UserData {
   _id: string;
@@ -8,13 +9,6 @@ export interface UserData {
   name: string;
   age: number;
   createdAt: string;
-}
-
-interface UserModalProps {
-  user: UserData;
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: SubmitHandler<UserData>;
 }
 
 const UserModal: React.FC<UserModalProps> = ({
@@ -47,6 +41,7 @@ const UserModal: React.FC<UserModalProps> = ({
                 Email
               </label>
               <input
+                disabled
                 type="text"
                 className="w-full border rounded py-2 px-3 text-gray-700 leading-tight"
                 {...register("email", { required: true })}

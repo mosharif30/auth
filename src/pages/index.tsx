@@ -43,7 +43,7 @@ const SigninSignup = () => {
           <>
             <div className="flex justify-between">
               <button
-                onClick={() => router.push("dashboard")}
+                onClick={() => router.push("/dashboard")}
                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8  m-2 rounded"
               >
                 Dashboard

@@ -1,3 +1,5 @@
+import { SubmitHandler } from "react-hook-form";
+
 export interface TokenPayload {
   email: string;
 }
@@ -7,10 +9,12 @@ export interface ApiResponse<T = {}> {
   data?: T;
 }
 export type ProfileData = {
+  _id?: string;
   email: string;
+  isAdmin: string;
   name: string;
   age: number;
-  isAdmin: string;
+  createdAt?: string;
 };
 
 export type FormData = {
@@ -18,3 +22,9 @@ export type FormData = {
   age: number;
   password: string;
 };
+export interface UserModalProps {
+  user: ProfileData;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: SubmitHandler<ProfileData>;
+}
