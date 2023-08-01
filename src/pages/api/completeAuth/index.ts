@@ -12,15 +12,7 @@ interface UserData {
   name: string;
   age: number;
   email: string;
-}
-
-async function connectToDatabase() {
-  try {
-    await connectDb();
-  } catch (error) {
-    console.error(error);
-    throw new Error("Error connecting to the database");
-  }
+  isAdmin: string;
 }
 
 function errorResponse(
@@ -54,7 +46,7 @@ async function completeAuthHandler(
       return errorResponse(res, 401, "Unauthorized");
     }
 
-    await connectToDatabase();
+    await connectDb();
     const user = await User.findOne({ email: result?.email });
 
     if (!user) {
@@ -74,6 +66,7 @@ async function completeAuthHandler(
       name,
       age,
       email: user.email,
+      isAdmin: user.isAdmin,
     };
 
     const expiresIn = 24 * 60 * 60;

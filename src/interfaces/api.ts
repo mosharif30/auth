@@ -10,6 +10,7 @@ export type ProfileData = {
   email: string;
   name: string;
   age: number;
+  isAdmin: string;
 };
 
 export type FormData = {

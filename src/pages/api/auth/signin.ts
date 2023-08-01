@@ -10,14 +10,6 @@ import { ApiResponse } from "@/interfaces/api";
 // Custom API response type definition
 
 // Function to connect to the database
-async function connectToDatabase() {
-  try {
-    await connectDb();
-  } catch (error) {
-    console.error(error);
-    throw new Error("Error connecting to the database");
-  }
-}
 
 // Handler function for POST requests
 async function loginHandler(
@@ -45,7 +37,7 @@ async function loginHandler(
         .status(422)
         .json({ status: "Failed", message: "Invalid Password f" });
     }
-    await connectToDatabase();
+    await connectDb();
 
     const user = await User.findOne({ email });
 
@@ -65,9 +57,13 @@ async function loginHandler(
 
     const secretKey: any = process.env.SECRET_KEY;
     const expiresIn = 24 * 60 * 60;
-    const token = sign({ email, name: user.name, age: user.age }, secretKey, {
-      expiresIn,
-    });
+    const token = sign(
+      { email, name: user.name, age: user.age, isAdmin: user.isAdmin },
+      secretKey,
+      {
+        expiresIn,
+      }
+    );
     const serializedToken = serialize("token", token, {
       httpOnly: true,
       maxAge: expiresIn,

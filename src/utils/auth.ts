@@ -19,12 +19,17 @@ async function verifyPassword(
 function verifyToken(
   token: string,
   secretKey: string
-): { email: string; name?: string; age?: number } | null {
+): { email: string; name?: string; age?: number; isAdmin: string } | null {
   try {
     const result = verify(token, secretKey) as JwtPayload;
-    console.log("eeee",result);
+    console.log("result", result);
 
-    return { email: result.email, name: result.name, age: result.age };
+    return {
+      email: result.email,
+      name: result.name,
+      age: result.age,
+      isAdmin: result.isAdmin,
+    };
   } catch (error) {
     return null;
   }

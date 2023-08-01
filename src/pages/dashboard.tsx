@@ -13,6 +13,7 @@ const Dashboard = () => {
     email: "null",
     name: "null",
     age: 0,
+    isAdmin: "false",
   });
 
   const {
@@ -30,8 +31,8 @@ const Dashboard = () => {
   const fetchData = async () => {
     try {
       const { data } = await axios.get("/api/user");
-      const { email, name, age } = data.data;
-      setProfile({ email, name, age });
+      const { email, name, age, isAdmin } = data.data;
+      setProfile({ email, name, age, isAdmin });
       reset({ name, age });
     } catch (error) {
       handleUnauthorized();
@@ -55,8 +56,8 @@ const Dashboard = () => {
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
       const res = await axios.post("/api/completeAuth", data);
-      const { email, name, age }: ProfileData = res.data.data;
-      setProfile({ email, name, age });
+      const { email, name, age, isAdmin }: ProfileData = res.data.data;
+      setProfile({ email, name, age, isAdmin });
       reset();
       setValue("name", name);
       setValue("age", age);
@@ -90,7 +91,7 @@ const Dashboard = () => {
   };
 
   const handleSignOut = async () => {
-    await SignOutHandler();
+    await SignOutHandler(true);
     router.replace("/");
   };
 
@@ -108,7 +109,17 @@ const Dashboard = () => {
           >
             Sign Out
           </button>
-
+          {profile.isAdmin == "true" && (
+            <>
+              {" "}
+              <button
+                onClick={() => router.push("/allUsers")}
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded"
+              >
+                All Users
+              </button>
+            </>
+          )}
           <h1 className="text-3xl text-center mb-6 font-bold">Profile Page</h1>
           <div className="mb-8">
             <h2 className="text-xl font-bold text-center">Profile Details</h2>

@@ -7,21 +7,11 @@ import { ApiResponse } from "@/interfaces/api";
 
 // Custom API response type definition
 
-async function connectToDatabase() {
-  try {
-    await connectDb();
-  } catch (error) {
-    console.error(error);
-    throw new Error("Error connecting to the database");
-  }
-}
-
 // Regular expression for email validation
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 // Regular expression for password validation
-const passwordRegex =
-  /^(?=.*\d)(?=.*[!@#$%.^&*])[a-zA-Z0-9!@#$%.^&*]{6,16}$/;
+const passwordRegex = /^(?=.*\d)(?=.*[!@#$%.^&*])[a-zA-Z0-9!@#$%.^&*]{6,16}$/;
 
 // Handler function for user registration (POST request)
 async function registerUserHandler(
@@ -58,7 +48,7 @@ async function registerUserHandler(
       });
     }
 
-    await connectToDatabase();
+    await connectDb();
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
