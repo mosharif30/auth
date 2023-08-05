@@ -41,16 +41,7 @@ const Dashboard = () => {
 
   const handleUnauthorized = () => {
     router.replace("/signin");
-    toast.error("Unauthorized! Please Sign In First", {
-      position: "bottom-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
+    toast.error("Unauthorized! Please Sign In First", {});
   };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
@@ -62,27 +53,9 @@ const Dashboard = () => {
       setValue("name", name);
       setValue("age", age);
       setEdit(false);
-      toast.success("Profile updated successfully!", {
-        position: "bottom-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      toast.success("Profile updated successfully!", {});
     } catch (error: any) {
-      toast.error(error.response.data.message, {
-        position: "bottom-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      toast.error(error.response.data.message, {});
 
       if (error.response.status === 401) {
         await handleSignOut();

@@ -35,32 +35,14 @@ const SigninForm: React.FC = () => {
       const res = await axios.post("/api/auth/signin", data);
       console.log(res);
       if (res.status === 200) {
-        toast.success("Welcome!", {
-          position: "bottom-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+        toast.success("Welcome!", {});
         router.replace("/dashboard");
       }
       reset(); // Reset the form after successful submission
     } catch (error: any) {
       console.log(error);
       setServerError(error.response.data.message);
-      toast.error(error.response.data.message, {
-        position: "bottom-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      toast.error(error.response.data.message, {});
     }
   };
   const togglePasswordVisibility = () => {

@@ -72,6 +72,7 @@ const UserModal: React.FC<UserModalProps> = ({
                 Admin
               </label>
               <select
+                disabled={true}
                 className="w-full border rounded py-2 px-3 text-gray-700 leading-tight"
                 {...register("isAdmin", { required: true })}
               >

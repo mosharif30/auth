@@ -3,24 +3,16 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-// Import the UserModal component
-import "react-toastify/dist/ReactToastify.css"; // Import Toastify styles if you are using it
+import "react-toastify/dist/ReactToastify.css";
 import UserModal from "@/containers/userModal";
 import { SignOutHandler } from "@/utils/signOutHandler";
 import { ProfileData } from "@/interfaces/api";
-
-interface FormValues {
-  email: string;
-  isAdmin: string;
-  name: string;
-  age: number;
-}
 
 const UserTable: React.FC = () => {
   const [editingUserId, setEditingUserId] = useState<string | undefined>(
     undefined
   );
-  const { register, handleSubmit, setValue } = useForm<FormValues>();
+  const { setValue } = useForm<ProfileData>();
   const [users, setUsers] = useState<ProfileData[]>([]);
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,22 +28,13 @@ const UserTable: React.FC = () => {
       .catch(async function (error) {
         if (error.response.status === 401) {
           await handleSignOut();
-          toast.error(error.response.data.message, {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
+          toast.error(error.response.data.message, {});
         }
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSignOut = async () => {
-    // Implement the SignOutHandler function if not already defined
     await SignOutHandler();
     router.replace("/");
   };
@@ -64,12 +47,37 @@ const UserTable: React.FC = () => {
     setValue("name", user.name);
     setValue("age", user.age);
   };
+  const handleDeleteUser = async (user: ProfileData) => {
+    try {
+      const users = await axios.delete(`/api/adminDeleteUser/${user._id}`);
+      toast.success(users.data.message, {});
+      setUsers(users.data.data);
+    } catch (error: any) {
+      toast.error(error.response.data.message, {});
+    }
+  };
+  const handleSaveUser: SubmitHandler<ProfileData> = async (data) => {
+    try {
+      const res = await axios.put("/api/adminEditUser", { data });
+      console.log(res);
 
-  const handleSaveUser: SubmitHandler<FormValues> = (data) => {
-    // You can implement the save logic here to update the user data on the server
-    console.log("Updated user data:", data);
-    setEditingUserId(undefined);
-    setIsModalOpen(false);
+      setEditingUserId(undefined);
+      setIsModalOpen(false);
+      const replaceObjectById = (
+        users: ProfileData[],
+        newObject: ProfileData
+      ) => {
+        const index = users.findIndex((obj: any) => obj._id === newObject._id);
+
+        if (index !== -1) {
+          users[index] = newObject;
+        }
+      };
+      replaceObjectById(users, res.data.data);
+      toast.success(res.data.message, {});
+    } catch (error: any) {
+      toast.error(error.response.data.message, {});
+    }
   };
 
   const handleCloseModal = () => {
@@ -108,10 +116,18 @@ const UserTable: React.FC = () => {
                 <td className="border p-2">
                   {" "}
                   <button
+                    disabled={user.isAdmin === "true"}
                     onClick={() => handleEditUser(user)}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded disabled:bg-slate-500"
                   >
                     Edit
+                  </button>
+                  <button
+                    disabled={user.isAdmin === "true"}
+                    onClick={() => handleDeleteUser(user)}
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2 disabled:bg-slate-500"
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>
